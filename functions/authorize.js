@@ -79,11 +79,13 @@ exports.handler = async function (event, context) {
       handleError(error)
     })
 
-    request.write(JSON.stringify({
-      grant_type: 'authorization_code',
-      redirect_uri: 'https://vimeo-direct-link-access.netlify.app/.netlify/functions/authorize'
-      code
-    }))
+    request.write(
+      JSON.stringify({
+        grant_type: 'authorization_code',
+        redirect_uri: 'https://vimeo-direct-link-access.netlify.app/.netlify/functions/authorize',
+        code
+      })
+    )
 
     request.end()
   })
