@@ -2,8 +2,11 @@ const https = require('https')
 const crypto = require('crypto')
 
 function encrypt (message) {
-  const cipher = crypto.createCipher('aes256', process.env.MESSAGE_KEY)
-  let encrypted = cipher.update(message, 'utf8', 'hex')
+  const secret = process.env.MESSAGE_KEY
+  const key = secret.repeat(32).substr(0, 32)
+  const iv = secret.repeat(16).substr(0, 16)
+  const cipher = crypto.createCipheriv('aes-256-ctr', key, iv)
+  let encrypted = cipher.update(text, 'utf8', 'hex')
   encrypted += cipher.final('hex')
   return encrypted
 }
