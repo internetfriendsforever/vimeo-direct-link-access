@@ -6,7 +6,7 @@ function encrypt (message) {
   const key = secret.repeat(32).substr(0, 32)
   const iv = secret.repeat(16).substr(0, 16)
   const cipher = crypto.createCipheriv('aes-256-ctr', key, iv)
-  let encrypted = cipher.update(text, 'utf8', 'hex')
+  let encrypted = cipher.update(message, 'utf8', 'hex')
   encrypted += cipher.final('hex')
   return encrypted
 }
