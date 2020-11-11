@@ -13,19 +13,19 @@ exports.handler = async function (event, context) {
   const clientSecret = process.env.VIMEO_CLIENT_SECRET
   const authToken = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
-  return {
-    statusCode: 200,
-    body: code
-  }
+  return new Promise((resolve, reject) => {
+    const handleError = error => {
+      console.error(error)
+      resolve({
+        statusCode: 500,
+        body: 'An error occurred'
+      })
+    }
 
-  // return new Promise((resolve, reject) => {
-  //   const handleError = error => {
-  //     console.error(error)
-  //     resolve({
-  //       statusCode: 500,
-  //       body: 'An error occurred'
-  //     })
-  //   }
+    resolve({
+      statusCode: 200,
+      body: code
+    })
 
   //   const request = https.request({
   //     hostname: 'api.vimeo.com',
@@ -84,5 +84,5 @@ exports.handler = async function (event, context) {
   //   }))
 
   //   request.end()
-  // })
+  })
 }
