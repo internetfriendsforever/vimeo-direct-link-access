@@ -22,11 +22,6 @@ exports.handler = async function (event, context) {
       })
     }
 
-    resolve({
-      statusCode: 200,
-      body: code
-    })
-
     const options = {
       hostname: 'api.vimeo.com',
       path: '/oauth/access_token',
