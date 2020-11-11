@@ -1,7 +1,8 @@
-const https = require('https')
+var https = require('https')
 
 exports.handler = async function (event, context) {
-  const { state, code } = event.queryStringParameters
+  var state = event.queryStringParameters.state
+  var code = event.queryStringParameters.code
 
   if (state !== 'check') {
     return {
@@ -9,12 +10,12 @@ exports.handler = async function (event, context) {
     }
   }
 
-  const clientId = process.env.VIMEO_CLIENT_ID
-  const clientSecret = process.env.VIMEO_CLIENT_SECRET
-  const authToken = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+  var clientId = process.env.VIMEO_CLIENT_ID
+  var clientSecret = process.env.VIMEO_CLIENT_SECRET
+  var authToken = Buffer.from(clientId + ':' + clientSecret).toString('base64')
 
-  return new Promise((resolve, reject) => {
-    const handleError = error => {
+  return new Promise(function(resolve, reject) {
+    function handleError (error) {
       console.error(error)
       resolve({
         statusCode: 500,
@@ -22,27 +23,27 @@ exports.handler = async function (event, context) {
       })
     }
 
-    const request = https.request({
+    var request = https.request({
       hostname: 'api.vimeo.com',
       path: '/oauth/access_token',
       method: 'POST',
       headers: {
-        'Authorization': `basic ${authToken}`,
+        'Authorization': 'basic ' + authToken,
         'Content-Type': 'application/json',
         'Accept': 'application/vnd.vimeo.*+json;version=3.4',
       }
-    }, (response) => {
-      const chunks = []
+    }, function (response) {
+      var chunks = []
 
-      response.on('data', chunk => {
+      response.on('data', function (chunk) {
         chunks.push(chunk)
       })
 
-      response.on('end', () => {
+      response.on('end', function () {
         try {
-          const body = Buffer.concat(chunks).toString()
-          const data = JSON.parse(body)
-          const accessToken = data.access_token
+          var body = Buffer.concat(chunks).toString()
+          var data = JSON.parse(body)
+          var accessToken = data.access_token
 
           if (!accessToken) {
             throw new Error('No access token in response')
@@ -68,7 +69,7 @@ exports.handler = async function (event, context) {
       })
     })
 
-    request.on('error', error => {
+    request.on('error', function (error) {
       handleError(error)
     })
 
