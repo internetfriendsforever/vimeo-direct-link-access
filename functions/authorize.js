@@ -1,12 +1,13 @@
-// var https = require('https')
+// const https = require('https')
 
-exports.handler = function (event, context) {
+exports.handler = async function (event, context) {
   return {
     statusCode: 200,
-    body: 'OK'
+    body: JSON.stringify({
+      status: 'OK',
+    })
   }
-  // var state = event.queryStringParameters.state
-  // var code = event.queryStringParameters.code
+  // const { state, code } = event.queryStringParameters
 
   // if (state !== 'check') {
   //   return {
@@ -14,12 +15,12 @@ exports.handler = function (event, context) {
   //   }
   // }
 
-  // var clientId = process.env.VIMEO_CLIENT_ID
-  // var clientSecret = process.env.VIMEO_CLIENT_SECRET
-  // var authToken = Buffer.from(clientId + ':' + clientSecret).toString('base64')
+  // const clientId = process.env.VIMEO_CLIENT_ID
+  // const clientSecret = process.env.VIMEO_CLIENT_SECRET
+  // const authToken = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
-  // return new Promise(function(resolve, reject) {
-  //   function handleError (error) {
+  // return new Promise((resolve, reject) => {
+  //   const handleError = error => {
   //     console.error(error)
   //     resolve({
   //       statusCode: 500,
@@ -27,27 +28,27 @@ exports.handler = function (event, context) {
   //     })
   //   }
 
-  //   var request = https.request({
+  //   const request = https.request({
   //     hostname: 'api.vimeo.com',
   //     path: '/oauth/access_token',
   //     method: 'POST',
   //     headers: {
-  //       'Authorization': 'basic ' + authToken,
+  //       'Authorization': `basic ${authToken}`,
   //       'Content-Type': 'application/json',
   //       'Accept': 'application/vnd.vimeo.*+json;version=3.4',
   //     }
-  //   }, function (response) {
-  //     var chunks = []
+  //   }, (response) => {
+  //     const chunks = []
 
-  //     response.on('data', function (chunk) {
+  //     response.on('data', chunk => {
   //       chunks.push(chunk)
   //     })
 
-  //     response.on('end', function () {
+  //     response.on('end', () => {
   //       try {
-  //         var body = Buffer.concat(chunks).toString()
-  //         var data = JSON.parse(body)
-  //         var accessToken = data.access_token
+  //         const body = Buffer.concat(chunks).toString()
+  //         const data = JSON.parse(body)
+  //         const accessToken = data.access_token
 
   //         if (!accessToken) {
   //           throw new Error('No access token in response')
@@ -73,7 +74,7 @@ exports.handler = function (event, context) {
   //     })
   //   })
 
-  //   request.on('error', function (error) {
+  //   request.on('error', error => {
   //     handleError(error)
   //   })
 
