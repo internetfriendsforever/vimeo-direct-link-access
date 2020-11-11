@@ -1,4 +1,12 @@
 const https = require('https')
+const crypto = require('crypto')
+
+function encrypt (message) {
+  const cipher = crypto.createCipher('aes256', process.env.MESSAGE_KEY)
+  let encrypted = cipher.update(message, 'utf8', 'hex')
+  encrypted += cipher.final('hex')
+  return encrypted
+}
 
 exports.handler = async function (event, context) {
   const { state, code } = event.queryStringParameters
@@ -53,15 +61,8 @@ exports.handler = async function (event, context) {
           resolve({
             statusCode: 200,
             body: [
-              'Your secret access token is:',
-              accessToken,
-              '',
-              'Handle with care.',
-              'Share only with trusted parties.',
-              'This token is only visible to you now.',
-              'It is not stored or distributed anywhere.',
-              '',
-              'Note: You can revoke access through your Vimeo account settings.'
+              'Your encrypted access token is:',
+              encrypt(accessToken)
             ].join('\n')
           })
         } catch (error) {
