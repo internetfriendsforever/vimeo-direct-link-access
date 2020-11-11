@@ -64,10 +64,10 @@ exports.handler = async function (event, context) {
           resolve({
             statusCode: 200,
             body: [
-              'Access token:',
+              'Access token (do not share):',
               accessToken,
               '',
-              'Encrypted access token:',
+              'Encrypted access token (safe to share):',
               encrypt(accessToken)
             ].join('\n')
           })
