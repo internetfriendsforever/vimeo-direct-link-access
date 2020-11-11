@@ -14,6 +14,14 @@ exports.handler = async function (event, context) {
   const authToken = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
   return new Promise((resolve, reject) => {
+    const handleError = error => {
+      console.error(error)
+      resolve({
+        statusCode: 500,
+        body: 'An error occurred'
+      })
+    }
+
     const request = https.request({
       hostname: 'api.vimeo.com',
       path: '/oauth/access_token',
@@ -31,21 +39,42 @@ exports.handler = async function (event, context) {
       })
 
       response.on('end', () => {
-        resolve({
-          statusCode: response.statusCode,
-          body: Buffer.concat(chunks).toString()
-        })
+        try {
+          const body = Buffer.concat(chunks).toString()
+          const data = JSON.parse(body)
+          const accessToken = data.access_token
+
+          if (!accessToken) {
+            throw new Error('No access token in response')
+          }
+
+          resolve({
+            statusCode: 200,
+            body: [
+              'Your secret access token is:',
+              accessToken,
+              '',
+              'Handle with care.',
+              'Share only with trusted parties.',
+              'This token is only visible to you now.',
+              'It is not stored or distributed anywhere.',
+              '',
+              'Note: You can revoke access through your Vimeo account settings.'
+            ].join('\n')
+          })
+        } catch (error) {
+          handleError(error)
+        }
       })
     })
 
-    request.on('error', error => resolve({
-      statusCode: 500,
-      error: error.message
-    }))
+    request.on('error', error => {
+      handleError(error)
+    })
 
     request.write(JSON.stringify({
-      grant_type: "authorization_code",
-      redirect_uri: "https://vimeo-direct-link-access.netlify.app/.netlify/functions/authorize"
+      grant_type: 'authorization_code',
+      redirect_uri: 'https://vimeo-direct-link-access.netlify.app/.netlify/functions/authorize'
       code
     }))
 
