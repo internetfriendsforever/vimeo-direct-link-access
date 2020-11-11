@@ -1,21 +1,22 @@
 // const https = require('https')
 
 exports.handler = async function (event, context) {
+  const { state, code } = event.queryStringParameters
+
+  if (state !== 'check') {
+    return {
+      statusCode: 403
+    }
+  }
+
+  const clientId = process.env.VIMEO_CLIENT_ID
+  const clientSecret = process.env.VIMEO_CLIENT_SECRET
+  const authToken = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+
   return {
     statusCode: 200,
-    body: 'OK'
+    body: code
   }
-  // const { state, code } = event.queryStringParameters
-
-  // if (state !== 'check') {
-  //   return {
-  //     statusCode: 403
-  //   }
-  // }
-
-  // const clientId = process.env.VIMEO_CLIENT_ID
-  // const clientSecret = process.env.VIMEO_CLIENT_SECRET
-  // const authToken = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
   // return new Promise((resolve, reject) => {
   //   const handleError = error => {
