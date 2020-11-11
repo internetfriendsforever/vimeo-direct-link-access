@@ -4,7 +4,7 @@ const [secret, message] = process.argv.slice(2)
 
 const key = secret.repeat(32).substr(0, 32)
 const iv = secret.repeat(16).substr(0, 16)
-const decipher = crypto.createDecipheriv('aes-256-ctr', secret, iv)
+const decipher = crypto.createDecipheriv('aes-256-ctr', key, iv)
 let decrypted = decipher.update(message, 'hex', 'utf8')
 decrypted += decipher.final('utf8')
 
