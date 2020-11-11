@@ -27,62 +27,64 @@ exports.handler = async function (event, context) {
       body: code
     })
 
-  //   const request = https.request({
-  //     hostname: 'api.vimeo.com',
-  //     path: '/oauth/access_token',
-  //     method: 'POST',
-  //     headers: {
-  //       'Authorization': `basic ${authToken}`,
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/vnd.vimeo.*+json;version=3.4',
-  //     }
-  //   }, (response) => {
-  //     const chunks = []
+    const options = {
+      hostname: 'api.vimeo.com',
+      path: '/oauth/access_token',
+      method: 'POST',
+      headers: {
+        'Authorization': `basic ${authToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.vimeo.*+json;version=3.4'
+      }
+    }
 
-  //     response.on('data', chunk => {
-  //       chunks.push(chunk)
-  //     })
+    const request = https.request(options, response => {
+      const chunks = []
 
-  //     response.on('end', () => {
-  //       try {
-  //         const body = Buffer.concat(chunks).toString()
-  //         const data = JSON.parse(body)
-  //         const accessToken = data.access_token
+      response.on('data', chunk => {
+        chunks.push(chunk)
+      })
 
-  //         if (!accessToken) {
-  //           throw new Error('No access token in response')
-  //         }
+      response.on('end', () => {
+        try {
+          const body = Buffer.concat(chunks).toString()
+          const data = JSON.parse(body)
+          const accessToken = data.access_token
 
-  //         resolve({
-  //           statusCode: 200,
-  //           body: [
-  //             'Your secret access token is:',
-  //             accessToken,
-  //             '',
-  //             'Handle with care.',
-  //             'Share only with trusted parties.',
-  //             'This token is only visible to you now.',
-  //             'It is not stored or distributed anywhere.',
-  //             '',
-  //             'Note: You can revoke access through your Vimeo account settings.'
-  //           ].join('\n')
-  //         })
-  //       } catch (error) {
-  //         handleError(error)
-  //       }
-  //     })
-  //   })
+          if (!accessToken) {
+            throw new Error('No access token in response')
+          }
 
-  //   request.on('error', error => {
-  //     handleError(error)
-  //   })
+          resolve({
+            statusCode: 200,
+            body: [
+              'Your secret access token is:',
+              accessToken,
+              '',
+              'Handle with care.',
+              'Share only with trusted parties.',
+              'This token is only visible to you now.',
+              'It is not stored or distributed anywhere.',
+              '',
+              'Note: You can revoke access through your Vimeo account settings.'
+            ].join('\n')
+          })
+        } catch (error) {
+          handleError(error)
+        }
+      })
+    })
 
-  //   request.write(JSON.stringify({
-  //     grant_type: 'authorization_code',
-  //     redirect_uri: 'https://vimeo-direct-link-access.netlify.app/.netlify/functions/authorize'
-  //     code
-  //   }))
+    request.on('error', error => {
+      handleError(error)
+    })
 
-  //   request.end()
+    request.write(JSON.stringify({
+      grant_type: 'authorization_code',
+      redirect_uri: 'https://vimeo-direct-link-access.netlify.app/.netlify/functions/authorize'
+      code
+    }))
+
+    request.end()
   })
 }
