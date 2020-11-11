@@ -3,9 +3,7 @@
 exports.handler = async function (event, context) {
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      status: 'OK',
-    })
+    body: 'OK'
   }
   // const { state, code } = event.queryStringParameters
 
